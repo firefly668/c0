@@ -1912,7 +1912,7 @@ bool analyse(){//TODO: 写入文件
     for(int i=0;i<Gmap.size();i++){
         if(Gmap[i].dataType=="string"){
             //Array<GlobalDef>.item[i].is_const = 1
-            pushIns(1,instructions);
+            instructions.push_back(0x01);
             int arrayNum=Gmap[i].name.size();
             //Array<GlobalDef>.item[i].value.count
             pushIns(arrayNum,instructions);
@@ -1923,8 +1923,8 @@ bool analyse(){//TODO: 写入文件
         }
         else if(Gmap[i].dataType=="int" || Gmap[i].dataType=="double"){
             //Array<GlobalDef>.item[i].is_const
-            if(Gmap[i].is_const) pushIns(1,instructions);
-            else pushIns(0,instructions);
+            if(Gmap[i].is_const) instructions.push_back(0x01);
+            else instructions.push_back(0x00);
             //Array<GlobalDef>.item[i].value.count=8
             pushIns(8,instructions);
             for(int j=0;j<8;j++){
