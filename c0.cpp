@@ -77,7 +77,7 @@ void pushIns(int16_t x,vector<unsigned char> &instructions){
     instructions.push_back(str[2]);
     instructions.push_back(str[1]);
 }
-enum TokenType{//TODO:标准库函数
+enum TokenType{
     NULL_TOKEN,
     FN_KW,
     LET_KW,
@@ -132,6 +132,7 @@ enum DFAState{
     MINUS_SIGN_STATE,
     MUL_STATE,
     DIV_SIGN_STATE,
+    NEQ_SIGN_STATE,
     EQUAL_SIGN_STATE,
     LESS_SIGN_STATE,
     GREATER_SIGN_STATE,
@@ -244,6 +245,9 @@ Token NT(){
                         break;
                     case '=':
                         currentState = DFAState::EQUAL_SIGN_STATE;
+                        break;
+                    case '!':
+                        currentState = DFAState::NEQ_SIGN_STATE;
                         break;
                     case '<':
                         currentState = DFAState::LESS_SIGN_STATE;
@@ -416,6 +420,11 @@ Token NT(){
             }
             break;
         }
+        case NEQ_SIGN_STATE:{
+            if(currentChar=='=') return Token("!=",TokenType::NEQ,startPostion);
+            else return Token(startPostion);
+            break;
+        }
         case LESS_SIGN_STATE:{
             if(currentChar=='=') return Token("<=",TokenType::LE,startPostion);
             else{
@@ -529,7 +538,6 @@ typedef struct GLOBAL{
 }Global;vector<Global> Gmap;
 typedef struct LOCAL{
     vector<Global> vars;
-    //loca要的位置TODO:设置
     vector<int> postionInFuntion;
     //所属函数
     int funtionPos;
@@ -694,7 +702,6 @@ bool analyseHighExpr(int funtionPos,int rangePos,int *retType){
             else return false;
         }
         else break;
-        unusedToken=false;
     }
     return true;
 }
@@ -731,7 +738,6 @@ bool analyseMediumExpr(int funtionPos,int rangePos,int *retType){
             }
         }
         else break;
-        unusedToken=false;
     }
     return true;
 }
