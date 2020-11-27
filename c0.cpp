@@ -1382,7 +1382,6 @@ bool analyseStmt(int funtionPos,int rangePos){
     }
     else if(currentToken.type==TokenType::IF_KW){
         if(!analyseIfStmt(funtionPos,rangePos)) return false;
-        unusedToken=false;
     }
     else if(currentToken.type==TokenType::WHILE_KW){
         if(!analyseWhileStmt(funtionPos,rangePos)) return false;
@@ -1725,11 +1724,9 @@ bool analyseBlockStmt(int funtionPos,int upRange){
         nextToken();
         if(currentToken.type!=TokenType::R_BRACE){
             if(!analyseStmt(funtionPos,rangePos)) return false;
-            unusedToken=false;
             continue;
         }
         else{
-            unusedToken=false;
             break;
         }
     }
@@ -1838,6 +1835,7 @@ bool analyseFuntion(){
     if(!tyIDENT(Fmap[funtionPos].retType)) return false;
     //函数体分析
     if(!analyseBlockStmt(funtionPos,-1)) return false;
+    unusedToken=false;
     return true;
 }
 // 程序
@@ -1975,7 +1973,7 @@ bool analyse(){//TODO: 写入文件
     }
     string str;
     for(int i=0;i<instructions.size();i++){
-        cout << instructions[i] << endl;
+        //cout << instructions[i] << endl;
         str+=instructions[i];
     }
     fwrite(str.c_str(),str.size(),1,outFile);
