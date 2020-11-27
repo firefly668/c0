@@ -995,7 +995,9 @@ bool analyseLowExpr(int funtionPos,int rangePos,int *retType){
                         param=true;
                         //arga()
                         Fmap[funtionPos].instructions.push_back(0x0b);
-                        pushIns(i+1,Fmap[funtionPos].instructions);
+                        if(Fmap[funtionPos].retType=="void")
+                            pushIns(i,Fmap[funtionPos].instructions);
+                        else pushIns(i+1,Fmap[funtionPos].instructions);
                         Fmap[funtionPos].insNum++;
                         break;
                     }
@@ -1013,7 +1015,7 @@ bool analyseLowExpr(int funtionPos,int rangePos,int *retType){
                             global=true;
                             //globa()
                             Fmap[funtionPos].instructions.push_back(0x0c);
-                            pushIns(i+1,Fmap[funtionPos].instructions);
+                            pushIns(i,Fmap[funtionPos].instructions);
                             Fmap[funtionPos].insNum++;
                             break;
                         }
