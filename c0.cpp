@@ -1217,6 +1217,7 @@ bool analyseLowExpr(int funtionPos,int rangePos,int *retType){
         if(currentToken.type!=TokenType::L_PAREN) return false;
         //int
         unusedToken=false;
+        nextToken();
         if(!analyseExpr(funtionPos,rangePos,&retT)) return false;
         //')'
         nextToken();
@@ -1239,6 +1240,7 @@ bool analyseLowExpr(int funtionPos,int rangePos,int *retType){
         if(currentToken.type!=TokenType::L_PAREN) return false;
         //double
         unusedToken=false;
+        nextToken();
         if(!analyseExpr(funtionPos,rangePos,&retT)) return false;
         //')'
         nextToken();
@@ -1261,6 +1263,7 @@ bool analyseLowExpr(int funtionPos,int rangePos,int *retType){
         if(currentToken.type!=TokenType::L_PAREN) return false;
         //int
         unusedToken=false;
+        nextToken();
         if(!analyseExpr(funtionPos,rangePos,&retT)) return false;
         //')'
         nextToken();
@@ -1426,8 +1429,6 @@ bool analyseExprStmt(int funtionPos,int rangePos){
         pushIns(1,Fmap[funtionPos].instructions);
         Fmap[funtionPos].insNum++;
     }
-    unusedToken=false;
-    nextToken();
     if(!currentToken.success) return false;
     if(currentToken.type!=TokenType::SEMICOLON) return false;
     unusedToken=false;
@@ -1602,7 +1603,6 @@ bool analyseWhileStmt(int funtionPos,int rangePos){
     unusedToken=false;
     nextToken();
     if(!analyseExpr(funtionPos,rangePos,&retType)) return false;
-    unusedToken=false;
     //brtrue(1)
     Fmap[funtionPos].instructions.push_back(0x43);
     pushIns(1,Fmap[funtionPos].instructions);
@@ -1614,6 +1614,7 @@ bool analyseWhileStmt(int funtionPos,int rangePos){
     int tempNum = ++Fmap[funtionPos].insNum;
     Lmap[rangePos].continueNum=tempNum;
     //block
+    unusedToken=true;
     if(!analyseBlockStmt(funtionPos,rangePos)) return false;
     unusedToken=false;
     //添加循环br(-?)
