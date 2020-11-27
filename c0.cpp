@@ -1938,7 +1938,7 @@ bool analyse(){//TODO: 写入文件
     for(int i=0;i<Fmap.size();i++){
         Fmap[i].pos=Gmap.size()+i;
         //Array<GlobalDef>.item[Gmap.size()+i].is_const = 1
-        pushIns(1,instructions);
+        instructions.push_back(0x01);
         int arrayNum=Fmap[i].name.size();
         //Array<GlobalDef>.item[Gmap.size()+i].value.count
         pushIns(arrayNum,instructions);
