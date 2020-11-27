@@ -1985,14 +1985,14 @@ bool analyse(){//TODO: 写入文件
 }
 
 int main(int argc,char** argv){
-    //file = fopen(argv[1],"rt");
-    file = fopen("test.txt","rt");
+    file = fopen(argv[1],"rt");
+    //file = fopen("test.txt","rt");
     /*char c='\0';
     while((c=fgetc(file))!=EOF){
         printf("%c",c);
     }*/
-    //outFile = fopen(argv[3],"wt");
-    outFile = fopen("out.txt","wt");
+    outFile = fopen(argv[3],"wt");
+    //outFile = fopen("out.txt","wt");
     if(!analyse()) return -1;
     fclose(file);
     fclose(outFile);
