@@ -286,7 +286,8 @@ Token NT(){
                 unGetCh();
                 return Token(startPostion);
             }
-            str+=currentChar;
+            if(currentChar!='\"' && currentChar!='\'')
+                str+=currentChar;
             break;
         }
         case IDENTIFIER_STATE:{
@@ -600,7 +601,7 @@ bool analyseExpr(int funtionPos,int rangePos,int *retType){
             if(!analyseHighExpr(funtionPos,rangePos,retType)) return false;
             //cmp.i或cmp.f
             if(*retType==1) Fmap[funtionPos].instructions.push_back(0x30);
-            else Fmap[funtionPos].instructions.push_back(0x31);
+            else Fmap[funtionPos].instructions.push_back(0x32);
             Fmap[funtionPos].insNum++;
             Fmap[funtionPos].instructions.push_back(0x39);
             Fmap[funtionPos].insNum++;
@@ -611,7 +612,7 @@ bool analyseExpr(int funtionPos,int rangePos,int *retType){
             nextToken();
             if(!analyseHighExpr(funtionPos,rangePos,retType)) return false;
             if(*retType==1) Fmap[funtionPos].instructions.push_back(0x30);
-            else Fmap[funtionPos].instructions.push_back(0x31);
+            else Fmap[funtionPos].instructions.push_back(0x32);
             Fmap[funtionPos].insNum++;
             Fmap[funtionPos].instructions.push_back(0x3a);
             Fmap[funtionPos].insNum++;
@@ -624,7 +625,7 @@ bool analyseExpr(int funtionPos,int rangePos,int *retType){
             nextToken();
             if(!analyseHighExpr(funtionPos,rangePos,retType)) return false;
             if(*retType==1) Fmap[funtionPos].instructions.push_back(0x30);
-            else Fmap[funtionPos].instructions.push_back(0x31);
+            else Fmap[funtionPos].instructions.push_back(0x32);
             Fmap[funtionPos].insNum++;
             Fmap[funtionPos].instructions.push_back(0x3a);
             Fmap[funtionPos].insNum++;
@@ -635,7 +636,7 @@ bool analyseExpr(int funtionPos,int rangePos,int *retType){
             nextToken();
             if(!analyseHighExpr(funtionPos,rangePos,retType)) return false;
             if(*retType==1) Fmap[funtionPos].instructions.push_back(0x30);
-            else Fmap[funtionPos].instructions.push_back(0x31);
+            else Fmap[funtionPos].instructions.push_back(0x32);
             Fmap[funtionPos].insNum++;
             Fmap[funtionPos].instructions.push_back(0x39);
             Fmap[funtionPos].insNum++;
@@ -648,7 +649,7 @@ bool analyseExpr(int funtionPos,int rangePos,int *retType){
             nextToken();
             if(!analyseHighExpr(funtionPos,rangePos,retType)) return false;
             if(*retType==1) Fmap[funtionPos].instructions.push_back(0x30);
-            else Fmap[funtionPos].instructions.push_back(0x31);
+            else Fmap[funtionPos].instructions.push_back(0x32);
             Fmap[funtionPos].insNum++;
             Fmap[funtionPos].instructions.push_back(0x2d);
             Fmap[funtionPos].insNum++;
@@ -659,7 +660,7 @@ bool analyseExpr(int funtionPos,int rangePos,int *retType){
             nextToken();
             if(!analyseHighExpr(funtionPos,rangePos,retType)) return false;
             if(*retType==1) Fmap[funtionPos].instructions.push_back(0x30);
-            else Fmap[funtionPos].instructions.push_back(0x31);
+            else Fmap[funtionPos].instructions.push_back(0x32);
             Fmap[funtionPos].insNum++;
             boolFlag=true;
         }
@@ -1278,7 +1279,7 @@ bool analyseLowExpr(int funtionPos,int rangePos,int *retType){
     }
     else if(currentToken.type==TokenType::PUTSTR){
         if(*retType!=0 && *retType!=3) return false;
-        int retT=2;
+        int retT=1;
         //'('
         unusedToken=false;
         nextToken();
@@ -1291,9 +1292,9 @@ bool analyseLowExpr(int funtionPos,int rangePos,int *retType){
         Global temp=Global(currentToken.value,"string",true);
         int64_t tempNum = Gmap.size();
         Gmap.push_back(temp);
-        Fmap[0].instructions.push_back(0x01);
-        pushIns(tempNum,Fmap[0].instructions);
-        Fmap[0].insNum++;
+        Fmap[funtionPos].instructions.push_back(0x01);
+        pushIns(tempNum,Fmap[funtionPos].instructions);
+        Fmap[funtionPos].insNum++;
         //')'
         unusedToken=false;
         nextToken();
@@ -1618,7 +1619,7 @@ bool analyseWhileStmt(int funtionPos,int rangePos){
     unusedToken=false;
     //添加循环br(-?)
     Fmap[funtionPos].instructions.push_back(0x41);
-    pushIns(whileNum-Fmap[funtionPos].insNum,Fmap[funtionPos].instructions);
+    pushIns(whileNum-Fmap[funtionPos].insNum-1,Fmap[funtionPos].instructions);
     Fmap[funtionPos].insNum++;
     //修改开头等待替换的0
     unsigned char str[5];
@@ -1836,6 +1837,9 @@ bool analyseFuntion(){
     //函数体分析
     if(!analyseBlockStmt(funtionPos,-1)) return false;
     unusedToken=false;
+    //默认ret
+    Fmap[funtionPos].instructions.push_back(0x49);
+    Fmap[funtionPos].insNum++;
     return true;
 }
 // 程序
@@ -1973,7 +1977,7 @@ bool analyse(){//TODO: 写入文件
     }
     string str;
     for(int i=0;i<instructions.size();i++){
-        //cout << instructions[i] << endl;
+        printf("0x%x\n",instructions[i]);
         str+=instructions[i];
     }
     fwrite(str.c_str(),str.size(),1,outFile);
