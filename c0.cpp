@@ -1954,6 +1954,7 @@ bool analyse(){//TODO: 写入文件
 int main(int argc,char** argv){
     file = fopen(argv[1],"rt");
     //file = fopen("test.txt","rt");
+    printf("test!!");
     outFile = fopen(argv[3],"wt");
     //outFile = fopen("out.txt","wt");
     if(!analyse()) return -1;
