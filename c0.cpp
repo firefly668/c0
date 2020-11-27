@@ -1153,6 +1153,7 @@ bool analyseLowExpr(int funtionPos,int rangePos,int *retType){
             if(!local && !param && !global) return false;
             //load64
             Fmap[funtionPos].instructions.push_back(0x13);
+            Fmap[funtionPos].insNum++;
         }
     }
     else if(currentToken.type==TokenType::GETINT){
