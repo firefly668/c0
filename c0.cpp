@@ -886,7 +886,7 @@ bool analyseLowExpr(int funtionPos,int rangePos,int *retType){
         unusedToken=false;
         nextToken();
         if(!currentToken.success) return false;
-        //函数调用TODO:函数调用自身 检查
+        //函数调用
         if(currentToken.type==TokenType::L_PAREN){
             //查找funtion，从main开始
             int callFuntionPos=0;
@@ -1356,6 +1356,31 @@ bool analyseLowExpr(int funtionPos,int rangePos,int *retType){
         else return false;
     }
     else return false;
+    if(currentToken.type==TokenType::AS_KW){
+        unusedToken=false;
+        nextToken();
+        if(!currentToken.success) return false;
+        if(currentToken.type!=TokenType::IDENT) return false;
+        string str;
+        if(!tyIDENT(str)) return false;
+        if(str=="int"){
+            if(*retType==2){
+                //ftoi
+                Fmap[funtionPos].instructions.push_back(0x37);
+                Fmap[funtionPos].insNum++;
+            }
+            else if(*retType!=1) return false;
+        }
+        else if(str=="double"){
+            if(*retType==1){
+                //itof
+                Fmap[funtionPos].instructions.push_back(0x36);
+                Fmap[funtionPos].insNum++;
+            }
+            else if(*retType!=2) return false;
+        }
+        else return false;
+    }
     return true;
 }
 // # 语句
@@ -1801,6 +1826,8 @@ bool analyseFuntionParamList(int funtionPos){
         nextToken();
         if(!currentToken.success) return false;
         if(currentToken.type!=TokenType::COMMA) break;
+        unusedToken=false;
+        nextToken();
     }
     Fmap[funtionPos].params=tempParams;
     return true;
