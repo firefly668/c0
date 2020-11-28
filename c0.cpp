@@ -243,6 +243,9 @@ Token NT(){
                     case '*':
                         currentState = DFAState::MUL_STATE;
                         break;
+                    case '/':
+                        currentState = DFAState::DIV_SIGN_STATE;
+                        break;
                     case '=':
                         currentState = DFAState::EQUAL_SIGN_STATE;
                         break;
