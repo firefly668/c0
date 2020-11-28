@@ -971,6 +971,7 @@ bool analyseLowExpr(int funtionPos,int rangePos,int *retType){
                     }
                 }
                 if(local) break;
+                else tempRangePos=Lmap[tempRangePos].upRange;
             }
             //函数的block
             if(!local){
@@ -1072,6 +1073,7 @@ bool analyseLowExpr(int funtionPos,int rangePos,int *retType){
                     }
                 }
                 if(local) break;
+                tempRangePos=Lmap[tempRangePos].upRange;
             }
             //函数的block
             if(!local){
