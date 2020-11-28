@@ -1584,18 +1584,12 @@ bool analyseIfStmt(int funtionPos,int rangePos){
     Fmap[funtionPos].instructions.push_back(0x41);
     int waitPos=Fmap[funtionPos].instructions.size();
     pushIns(0,Fmap[funtionPos].instructions);
-    int tempNum = ++Fmap[funtionPos].insNum;
+    int ifLowNum = ++Fmap[funtionPos].insNum;
     //block
     unusedToken=true;
     if(!analyseBlockStmt(funtionPos,rangePos)) return false;
     unusedToken=false;
-    //修改等待替换的0
-    unsigned char str[5];
-    memset(str,0,sizeof(str));
-    intToFourBits(Fmap[funtionPos].insNum-tempNum,str);
-    for(int i=0;i<4;i++){
-        Fmap[funtionPos].instructions[waitPos+i]=str[4-i];
-    }
+    int ifHighNum=Fmap[funtionPos].insNum;
     //预读else
     nextToken();
     if(!currentToken.success) return false;
@@ -1608,14 +1602,15 @@ bool analyseIfStmt(int funtionPos,int rangePos){
             Fmap[funtionPos].instructions.push_back(0x41);
             int waitPos=Fmap[funtionPos].instructions.size();
             pushIns(0,Fmap[funtionPos].instructions);
-            int tempNum = ++Fmap[funtionPos].insNum;
+            int elseLowNum = ++Fmap[funtionPos].insNum;
+            ifHighNum++;
             //block
             if(!analyseBlockStmt(funtionPos,rangePos)) return false;
             unusedToken=false;
             //修改等待替换的0
             unsigned char str[5];
             memset(str,0,sizeof(str));
-            intToFourBits(Fmap[funtionPos].insNum-tempNum,str);
+            intToFourBits(Fmap[funtionPos].insNum-elseLowNum,str);
             for(int i=0;i<4;i++){
                 Fmap[funtionPos].instructions[waitPos+i]=str[4-i];
             }
@@ -1625,6 +1620,13 @@ bool analyseIfStmt(int funtionPos,int rangePos){
             unusedToken=false;
         }
         else return false;
+    }
+    //修改if等待替换的br(0)
+    unsigned char str[5];
+    memset(str,0,sizeof(str));
+    intToFourBits(ifHighNum-ifLowNum,str);
+    for(int i=0;i<4;i++){
+        Fmap[funtionPos].instructions[waitPos+i]=str[4-i];
     }
     //结尾添加一个br(0)
     Fmap[funtionPos].instructions.push_back(0x41);
