@@ -873,9 +873,9 @@ bool analyseLowExpr(int funtionPos,int rangePos,int *retType){
         //要求该lowexpr的返回类型不是int
         if(*retType!=0 && *retType!=1) return false;
         int64_t tempNum = currentToken.value.c_str()[0];
-        Fmap[0].instructions.push_back(0x01);
-        pushIns(tempNum,Fmap[0].instructions);
-        Fmap[0].insNum++;
+        Fmap[funtionPos].instructions.push_back(0x01);
+        pushIns(tempNum,Fmap[funtionPos].instructions);
+        Fmap[funtionPos].insNum++;
         if(*retType==0) *retType=1;
         unusedToken=false;
         nextToken();
@@ -1592,7 +1592,7 @@ bool analyseIfStmt(int funtionPos,int rangePos){
     //修改等待替换的0
     unsigned char str[5];
     memset(str,0,sizeof(str));
-    intToFourBits(Fmap[funtionPos].insNum-tempNum-1,str);
+    intToFourBits(Fmap[funtionPos].insNum-tempNum,str);
     for(int i=0;i<4;i++){
         Fmap[funtionPos].instructions[waitPos+i]=str[4-i];
     }
@@ -1615,7 +1615,7 @@ bool analyseIfStmt(int funtionPos,int rangePos){
             //修改等待替换的0
             unsigned char str[5];
             memset(str,0,sizeof(str));
-            intToFourBits(Fmap[funtionPos].insNum-tempNum-1,str);
+            intToFourBits(Fmap[funtionPos].insNum-tempNum,str);
             for(int i=0;i<4;i++){
                 Fmap[funtionPos].instructions[waitPos+i]=str[4-i];
             }
@@ -1629,6 +1629,7 @@ bool analyseIfStmt(int funtionPos,int rangePos){
     //结尾添加一个br(0)
     Fmap[funtionPos].instructions.push_back(0x41);
     pushIns(0,Fmap[funtionPos].instructions);
+    Fmap[funtionPos].insNum++;
     return true;
 }
 //while_stmt -> 'while' expr block_stmt
