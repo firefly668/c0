@@ -1028,6 +1028,7 @@ bool analyseLowExpr(int funtionPos,int rangePos,int *retType){
                 }
             }
             if(!local && !param && !global) return false;
+
             //expr
             unusedToken=false;
             nextToken();
@@ -1830,6 +1831,7 @@ bool analyseFuntionParamList(int funtionPos){
         nextToken();
     }
     Fmap[funtionPos].params=tempParams;
+    Fmap[funtionPos].paramSlotNum = Fmap[funtionPos].params.size();
     return true;
 }
 //function -> 'fn' IDENT '(' function_param_list? ')' '->' ty block_stmt 
