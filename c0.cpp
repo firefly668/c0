@@ -406,9 +406,10 @@ Token NT(){
         case DIV_SIGN_STATE:{
             if(currentChar=='/'){
                 char preChar=getChar();
-                while(preChar!=EOF || preChar!='\n') preChar=getChar();
+                while(preChar!=EOF && preChar!='\n') preChar=getChar();
                 if(preChar==EOF) return Token(startPostion);
                 currentState = DFAState::INITIAL_STATE;
+                str.clear();
             }
             else{
                 unGetCh();
@@ -2039,12 +2040,14 @@ bool analyse(){//TODO: 写入文件
 int main(int argc,char** argv){
     file = fopen(argv[1],"rt");
     //file = fopen("test.txt","rt");
-    /*char c='\0';
-    while((c=fgetc(file))!=EOF){
-        printf("%c",c);
-    }*/
     outFile = fopen(argv[3],"wt");
     //outFile = fopen("out.txt","wt");
+    /*while(true){
+        unusedToken=false;
+        nextToken();
+        if(!currentToken.success) break;
+        cout << currentToken.value << " " << currentToken.type << endl;
+    }*/
     if(!analyse()) return -1;
     fclose(file);
     fclose(outFile);
