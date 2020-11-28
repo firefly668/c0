@@ -1592,7 +1592,7 @@ bool analyseIfStmt(int funtionPos,int rangePos){
     //修改等待替换的0
     unsigned char str[5];
     memset(str,0,sizeof(str));
-    intToFourBits(Fmap[funtionPos].insNum-tempNum+1,str);
+    intToFourBits(Fmap[funtionPos].insNum-tempNum,str);
     for(int i=0;i<4;i++){
         Fmap[funtionPos].instructions[waitPos+i]=str[4-i];
     }
