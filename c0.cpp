@@ -897,14 +897,12 @@ bool analyseLowExpr(int funtionPos,int rangePos,int *retType){
                 }
             //没找到
             if(callFuntionPos==0) return false;
-            unusedToken=false;
-            if(Fmap[callFuntionPos].params.size()>=1)
-                if(!analyseCallParamList(funtionPos,rangePos,callFuntionPos)) return false;
             //压入_ret
             if(Fmap[callFuntionPos].retType=="void"){
                 //找到的函数返回值不是要求的返回值
                 if(*retType!=0 && *retType!=3) return false;
                 //压入
+                //stackalloc(0)
                 Fmap[funtionPos].instructions.push_back(0x1a);
                 pushIns(0,Fmap[funtionPos].instructions);
                 Fmap[funtionPos].insNum++;
@@ -915,6 +913,7 @@ bool analyseLowExpr(int funtionPos,int rangePos,int *retType){
                 //找到的函数返回值不是要求的返回值
                 if(*retType!=0 && *retType!=1) return false;
                 //压入
+                //stackalloc(1)
                 Fmap[funtionPos].instructions.push_back(0x1a);
                 pushIns(1,Fmap[funtionPos].instructions);
                 Fmap[funtionPos].insNum++;
@@ -925,12 +924,17 @@ bool analyseLowExpr(int funtionPos,int rangePos,int *retType){
                 //找到的函数返回值不是要求的返回值
                 if(*retType!=0 && *retType!=2) return false;
                 //压入
+                //stackalloc(1)
                 Fmap[funtionPos].instructions.push_back(0x1a);
                 pushIns(1,Fmap[funtionPos].instructions);
                 Fmap[funtionPos].insNum++;
                 //返回调用者想要查看的返回值类型
                 if(*retType==0) *retType=2;
             }
+            unusedToken=false;
+            nextToken();
+            if(Fmap[callFuntionPos].params.size()>=1)
+                if(!analyseCallParamList(funtionPos,rangePos,callFuntionPos)) return false;
             //call(callFuntionPos)
             Fmap[funtionPos].instructions.push_back(0x48);
             pushIns(callFuntionPos,Fmap[funtionPos].instructions);
@@ -940,6 +944,7 @@ bool analyseLowExpr(int funtionPos,int rangePos,int *retType){
             if(!currentToken.success) return false;
             if(currentToken.type!=TokenType::R_PAREN) return false;
             unusedToken=false;
+            nextToken();
         }
         //赋值语句
         else if(currentToken.type==TokenType::ASSIGN){
@@ -1332,18 +1337,21 @@ bool analyseLowExpr(int funtionPos,int rangePos,int *retType){
         nextToken();
     }
     else if(currentToken.type==TokenType::MINUS){
+        if(*retType!=0 && *retType!=1 && *retType!=2) return false;
         unusedToken=false;
         nextToken();
         if(!currentToken.success) return false;
-        int retType=0;
-        if(!analyseExpr(funtionPos,rangePos,&retType)) return false;
-        if(retType==1){
+        int retT=0;
+        if(!analyseExpr(funtionPos,rangePos,&retT)) return false;
+        if(retT==1){
             Fmap[funtionPos].instructions.push_back(0x34);
             Fmap[funtionPos].insNum++;
+            if(*retType==0) *retType=1;
         }
-        else if(retType==2){
+        else if(retT==2){
             Fmap[funtionPos].instructions.push_back(0x35);
             Fmap[funtionPos].insNum++;
+            if(*retType==0) *retType=2;
         }
         else return false;
     }
