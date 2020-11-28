@@ -1597,32 +1597,32 @@ bool analyseIfStmt(int funtionPos,int rangePos){
     nextToken();
     if(!currentToken.success) return false;
     if(currentToken.type==TokenType::ELSE_KW){
+        //br(0)0等待替换;
+        Fmap[funtionPos].instructions.push_back(0x41);
+        int waitPos=Fmap[funtionPos].instructions.size();
+        pushIns(0,Fmap[funtionPos].instructions);
+        int elseLowNum = ++Fmap[funtionPos].insNum;
+        ifHighNum++;
         unusedToken=false;
         nextToken();
         if(!currentToken.success) return false;
         if(currentToken.type==TokenType::L_BRACE){
-            //br(0)0等待替换;
-            Fmap[funtionPos].instructions.push_back(0x41);
-            int waitPos=Fmap[funtionPos].instructions.size();
-            pushIns(0,Fmap[funtionPos].instructions);
-            int elseLowNum = ++Fmap[funtionPos].insNum;
-            ifHighNum++;
             //block
             if(!analyseBlockStmt(funtionPos,rangePos)) return false;
             unusedToken=false;
-            //修改等待替换的0
-            unsigned char str[5];
-            memset(str,0,sizeof(str));
-            intToFourBits(Fmap[funtionPos].insNum-elseLowNum,str);
-            for(int i=0;i<4;i++){
-                Fmap[funtionPos].instructions[waitPos+i]=str[4-i];
-            }
         }
         else if(currentToken.type==TokenType::IF_KW){
             if(!analyseIfStmt(funtionPos,rangePos)) return false;
             unusedToken=false;
         }
         else return false;
+        //修改else等待替换的br(0)
+        unsigned char str[5];
+        memset(str,0,sizeof(str));
+        intToFourBits(Fmap[funtionPos].insNum-elseLowNum,str);
+        for(int i=0;i<4;i++){
+            Fmap[funtionPos].instructions[waitPos+i]=str[4-i];
+        }
     }
     //修改if等待替换的br(0)
     unsigned char str[5];
