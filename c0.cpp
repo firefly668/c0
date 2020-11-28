@@ -1126,6 +1126,8 @@ bool analyseLowExpr(int funtionPos,int rangePos,int *retType){
                         param=true;
                         //arga()
                         Fmap[funtionPos].instructions.push_back(0x0b);
+                        if(Fmap[funtionPos].retType=="void")
+                            pushIns(i,Fmap[funtionPos].instructions);
                         pushIns(i+1,Fmap[funtionPos].instructions);
                         Fmap[funtionPos].insNum++;
                         break;
