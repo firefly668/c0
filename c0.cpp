@@ -1054,7 +1054,6 @@ bool analyseLowExpr(int funtionPos,int rangePos,int *retType){
             while(Lmap[tempRangePos].upRange!=-1){
                 for(int i=0;i<Lmap[tempRangePos].vars.size();i++){
                     if(tempToken.value==Lmap[tempRangePos].vars[i].name){
-                        if(Lmap[tempRangePos].vars[i].is_const) return false;
                         if(Lmap[tempRangePos].vars[i].dataType=="int") {
                             if(*retType!=0 && *retType!=1) return false;
                             if(*retType==0) *retType=1;
@@ -1083,7 +1082,6 @@ bool analyseLowExpr(int funtionPos,int rangePos,int *retType){
             if(!local){
                 for(int i=0;i<Lmap[tempRangePos].vars.size();i++){
                     if(tempToken.value==Lmap[tempRangePos].vars[i].name){
-                        if(Lmap[tempRangePos].vars[i].is_const) return false;
                         if(Lmap[tempRangePos].vars[i].dataType=="int") {
                             if(*retType!=0 && *retType!=1) return false;
                             if(*retType==0) *retType=1;
@@ -1110,7 +1108,6 @@ bool analyseLowExpr(int funtionPos,int rangePos,int *retType){
             if(!local){
                 for(int i=0;i<Fmap[funtionPos].params.size();i++){
                     if(tempToken.value==Fmap[funtionPos].params[i].name){
-                        if(Fmap[funtionPos].params[i].is_const) return false;
                         if(Fmap[funtionPos].params[i].dataType=="int") {
                             if(*retType!=0 && *retType!=1) return false;
                             if(*retType==0) *retType=1;
@@ -1140,7 +1137,6 @@ bool analyseLowExpr(int funtionPos,int rangePos,int *retType){
                 for(int i=0;i<Gmap.size();i++){
                     if(Gmap[i].dataType!="string"){
                         if(tempToken.value==Gmap[i].name){
-                            if(Gmap[i].is_const) return false;
                             if(Gmap[i].dataType=="int") {
                                 if(*retType!=0 && *retType!=1) return false;
                                 if(*retType==0) *retType=1;
